@@ -1,0 +1,20 @@
+import json
+from flask import Flask, request, Response
+
+app = Flask(__name__)
+
+@app.route("/run", methods=["POST"])
+def run():
+    data = request.json
+    agenda = data["agenda"]
+
+    ics = "BEGIN:VCALENDAR\nVERSION:2.0\n"
+
+    for ev in agenda:
+        ics += f"BEGIN:VEVENT\nSUMMARY:{ev['titulo']}\n"
+        ics += f"DTSTART:{ev['inicio']}\nDTEND:{ev['fim']}\n"
+        ics += "END:VEVENT\n"
+
+    ics += "END:VCALENDAR"
+
+    return Response(ics, mimetype="text/calendar")
